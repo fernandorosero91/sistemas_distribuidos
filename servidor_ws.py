@@ -32,13 +32,14 @@ class ConnectionManager:
             await conexion.send_json(mensaje)
 
 
-manager = ConnectionManager()
+manager_chat = ConnectionManager()
+manager_notif = ConnectionManager()
 
 
 @app.websocket("/ws/chat")
 async def websocket_chat(websocket: WebSocket):
     """Chat en tiempo real entre todos los clientes conectados."""
-    await manager.conectar(websocket)
+    await manager_chat.conectar(websocket)
     try:
         while True:
             data = await websocket.receive_text()
@@ -46,17 +47,17 @@ async def websocket_chat(websocket: WebSocket):
                 "tipo": "chat",
                 "mensaje": data,
                 "hora": datetime.now().strftime("%H:%M:%S"),
-                "clientes": len(manager.conexiones)
+                "clientes": len(manager_chat.conexiones)
             }
-            await manager.broadcast(mensaje)
+            await manager_chat.broadcast(mensaje)
     except WebSocketDisconnect:
-        manager.desconectar(websocket)
+        manager_chat.desconectar(websocket)
 
 
 @app.websocket("/ws/productos")
 async def websocket_productos(websocket: WebSocket):
     """Notificaciones de cambios en el catalogo de productos."""
-    await manager.conectar(websocket)
+    await manager_notif.conectar(websocket)
     try:
         while True:
             data = await websocket.receive_text()
@@ -84,9 +85,9 @@ async def websocket_productos(websocket: WebSocket):
                     "hora": datetime.now().strftime("%H:%M:%S")
                 }
 
-            await manager.broadcast(notificacion)
+            await manager_notif.broadcast(notificacion)
     except WebSocketDisconnect:
-        manager.desconectar(websocket)
+        manager_notif.desconectar(websocket)
 
 
 @app.get("/", response_class=HTMLResponse)
