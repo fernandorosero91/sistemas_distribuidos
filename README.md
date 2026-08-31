@@ -26,6 +26,29 @@ pip3 install -r requirements.txt
 └── requirements.txt        # Dependencias
 ```
 
+## Ejecucion
+
+Cada parte corre en su propio puerto. Puedes ejecutar todas las partes al mismo tiempo en terminales separadas:
+
+```bash
+# Terminal 1 - REST (puerto 8080)
+python3 servidor_rest.py
+
+# Terminal 2 - gRPC (puerto 50051)
+python3 servidor_grpc.py
+
+# Terminal 3 - WebSockets (puerto 8081)
+python3 servidor_ws.py
+```
+
+### Puertos
+
+| Servicio | Puerto | Protocolo |
+|----------|--------|-----------|
+| REST (FastAPI) | 8080 | HTTP/1.1 |
+| gRPC | 50051 | HTTP/2 |
+| WebSockets | 8081 | TCP |
+
 ## Parte 1: REST (HTTP/1.1)
 
 ### Servidor
