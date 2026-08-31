@@ -1,6 +1,6 @@
 # Taller Sistemas Distribuidos
 
-Implementacion directa de protocolos de comunicacion distribuida: **REST (HTTP/1.1)** y **gRPC (HTTP/2)**.
+Implementacion directa de protocolos de comunicacion distribuida: **REST (HTTP/1.1)**, **gRPC (HTTP/2)** y **WebSockets (TCP)**.
 
 ## Requisitos
 
@@ -22,6 +22,7 @@ pip3 install -r requirements.txt
 ├── inventario_pb2_grpc.py  # Codigo generado del proto (stub)
 ├── servidor_grpc.py        # Servidor gRPC (HTTP/2)
 ├── cliente_grpc.py         # Cliente gRPC
+├── servidor_ws.py          # Servidor WebSockets + chat en tiempo real
 └── requirements.txt        # Dependencias
 ```
 
@@ -124,3 +125,49 @@ python3 cliente_grpc.py
 - **Contrato fuerte**: Los archivos `.proto` garantizan compatibilidad entre clientes y servidores.
 - **Streaming**: Soporte nativo para flujos de datos bidireccionales.
 - **Code generation**: Genera automaticamente stubs en multiples lenguajes.
+
+## Parte 3: WebSockets (TCP)
+
+### Servidor
+
+Chat en tiempo real y notificaciones de productos via WebSocket.
+
+```bash
+python3 servidor_ws.py
+```
+
+Abre en el navegador: `http://localhost:8081`
+
+### Endpoints WebSocket
+
+| URL | Descripcion |
+|-----|-------------|
+| `ws://localhost:8081/ws/chat` | Chat en tiempo real (broadcast a todos los clientes) |
+| `ws://localhost:8081/ws/productos` | Notificaciones de cambios en el catalogo |
+
+### Interfaz web
+
+- **Panel izquierdo**: Chat en tiempo real con todos los clientes conectados
+- **Panel derecho**: Notificaciones de productos (agregar/eliminar)
+
+### Ejemplo cliente JavaScript
+
+```javascript
+// Conectar al chat
+const ws = new WebSocket('ws://localhost:8081/ws/chat');
+
+ws.onopen = () => console.log('Conectado');
+ws.onmessage = (e) => console.log(JSON.parse(e.data));
+ws.send('Hola desde el cliente');
+```
+
+## Comparacion de Protocolos
+
+| Caracteristica | REST | gRPC | WebSockets |
+|----------------|------|------|------------|
+| Protocolo | HTTP/1.1 | HTTP/2 | TCP |
+| Conexion | Stateless | Persistente | Persistente |
+| Comunicacion | Request-Response | Request-Response | Bidireccional |
+| Serializacion | JSON | Protocol Buffers | Texto/Binario |
+| Uso principal | CRUD | Microservicios | Tiempo real |
+| Latencia | Media | Baja | Muy baja |
