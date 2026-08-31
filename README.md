@@ -1,53 +1,63 @@
 # Taller Sistemas Distribuidos
 
-Implementación directa de protocolos de comunicación distribuida: **REST (HTTP/1.1)** y **gRPC (HTTP/2)**.
+Implementacion directa de protocolos de comunicacion distribuida: **REST (HTTP/1.1)** y **gRPC (HTTP/2)**.
 
 ## Requisitos
 
-- Python 3.8+
+- Python 3.10+
 - Dependencias:
 
 ```bash
-pip3 install grpcio grpcio-tools
+pip3 install -r requirements.txt
 ```
 
 ## Estructura
 
 ```
 .
-├── servidor_rest.py        # Servidor REST (HTTP/1.1)
-├── cliente_rest.py         # Cliente REST
-├── inventario.proto        # Definición del servicio gRPC
-├── inventario_pb2.py       # Código generado del proto
-├── inventario_pb2_grpc.py  # Código generado del proto (stub)
+├── servidor_rest.py        # Servidor REST con FastAPI + interfaz web
+├── cliente_rest.py         # Cliente REST para pruebas
+├── inventario.proto        # Definicion del servicio gRPC
+├── inventario_pb2.py       # Codigo generado del proto
+├── inventario_pb2_grpc.py  # Codigo generado del proto (stub)
 ├── servidor_grpc.py        # Servidor gRPC (HTTP/2)
-└── cliente_grpc.py         # Cliente gRPC
+├── cliente_grpc.py         # Cliente gRPC
+└── requirements.txt        # Dependencias
 ```
 
 ## Parte 1: REST (HTTP/1.1)
 
 ### Servidor
 
-Expone un catálogo de productos con los endpoints:
-
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| `GET` | `/productos` | Consultar catálogo completo |
-| `POST` | `/productos` | Registrar nuevo producto |
+Expone un catalogo de productos con interfaz web incluida.
 
 ```bash
 python3 servidor_rest.py
 ```
 
-El servidor inicia en `http://localhost:8080`.
+### URLs disponibles
 
-### Cliente
+| URL | Descripcion |
+|-----|-------------|
+| `http://localhost:8080` | Interfaz web (formulario + tabla) |
+| `http://localhost:8080/docs` | Documentacion Swagger UI (probar endpoints) |
+| `http://localhost:8080/redoc` | Documentacion ReDoc |
+| `http://localhost:8080/productos` | API JSON |
 
-Realiza peticiones al servidor y muestra un análisis de overhead HTTP:
+### Endpoints
 
-```bash
-python3 cliente_rest.py
-```
+| Metodo | Ruta | Descripcion |
+|--------|------|-------------|
+| `GET` | `/productos` | Consultar catalogo completo |
+| `POST` | `/productos` | Registrar nuevo producto |
+| `GET` | `/` | Interfaz web (formulario + tabla) |
+
+### Prueba con Swagger UI
+
+1. Abre `http://localhost:8080/docs`
+2. Haz clic en el endpoint que quieres probar
+3. Haz clic en "Try it out"
+4. Completa los campos y ejecuta
 
 ### Prueba manual con curl
 
@@ -63,7 +73,7 @@ curl -X POST http://localhost:8080/productos \
 
 ## Parte 2: gRPC (HTTP/2)
 
-### Definición del servicio (inventario.proto)
+### Definicion del servicio (inventario.proto)
 
 ```protobuf
 service Inventario {
@@ -95,22 +105,22 @@ El servidor inicia en `localhost:50051`.
 python3 cliente_grpc.py
 ```
 
-## Comparación: gRPC vs REST
+## Comparacion: gRPC vs REST
 
-| Característica | REST | gRPC |
+| Caracteristica | REST | gRPC |
 |----------------|------|------|
-| Serialización | JSON (texto) | Protocol Buffers (binario) |
+| Serializacion | JSON (texto) | Protocol Buffers (binario) |
 | Protocolo | HTTP/1.1 | HTTP/2 |
-| Tamaño payload | Mayor | 30-50% menor |
-| Multiplexing | No | Sí |
-| Streaming | No nativo | Sí |
+| Tamano payload | Mayor | 30-50% menor |
+| Multiplexing | No | Si |
+| Streaming | No nativo | Si |
 | Contrato | Sin tipado | .proto fuerte |
 | Latencia | Mayor | Menor |
 
 ### Ventajas de gRPC en microservicios
 
-- **Rendimiento**: Serialización binaria reduce tamaño de mensajes y tiempo de parsing.
-- **HTTP/2**: Multiplexing permite múltiples llamadas paralelas en una conexión.
+- **Rendimiento**: Serializacion binaria reduce tamano de mensajes y tiempo de parsing.
+- **HTTP/2**: Multiplexing permite multiples llamadas paralelas en una conexion.
 - **Contrato fuerte**: Los archivos `.proto` garantizan compatibilidad entre clientes y servidores.
 - **Streaming**: Soporte nativo para flujos de datos bidireccionales.
-- **Code generation**: Genera automáticamente stubs en múltiples lenguajes.
+- **Code generation**: Genera automaticamente stubs en multiples lenguajes.
