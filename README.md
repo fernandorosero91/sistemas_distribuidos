@@ -97,6 +97,8 @@ curl -X POST http://localhost:8080/productos \
 
 ## Parte 2: gRPC (HTTP/2)
 
+**IMPORTANTE:** gRPC usa HTTP/2 con Protocol Buffers (binario). No se puede probar desde el navegador. Usa el cliente Python.
+
 ### Definicion del servicio (inventario.proto)
 
 ```protobuf
@@ -125,9 +127,19 @@ El servidor inicia en `localhost:50051`.
 
 ### Cliente
 
+Para probar el servidor gRPC, ejecuta el cliente en **otra terminal**:
+
 ```bash
 python3 cliente_grpc.py
 ```
+
+El cliente ejecutara:
+1. Listar todos los productos
+2. Obtener producto por ID
+3. Registrar un nuevo producto
+4. Listar productos actualizados
+
+**No uses el navegador** - gRPC no es HTTP plain como REST.
 
 ## Comparacion: gRPC vs REST
 
