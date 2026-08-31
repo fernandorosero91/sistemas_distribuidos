@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package inventario;
+
+// Servicio de Inventario para gestión de productos
+service Inventario {
+  // Obtiene un producto por su ID
+  rpc ObtenerProducto (ProductoRequest) returns (ProductoResponse);
+
+  // Lista todos los productos
+  rpc ListarProductos (ListaRequest) returns (ListaResponse);
+
+  // Registra un nuevo producto
+  rpc RegistrarProducto (NuevoProductoRequest) returns (ProductoResponse);
+}
+
+// Estructura de un producto
+message Producto {
+  int32 id = 1;
+  string nombre = 2;
+  double precio = 3;
+  int32 stock = 4;
+}
+
+// Request para obtener un producto por ID
+message ProductoRequest {
+  int32 id = 1;
+}
+
+// Response con un producto
+message ProductoResponse {
+  Producto producto = 1;
+  string mensaje = 2;
+}
+
+// Request para listar productos
+message ListaRequest {
+  // Vacío, no se necesitan parámetros
+}
+
+// Response con la lista de productos
+message ListaResponse {
+  repeated Producto productos = 1;
+  int32 total = 2;
+}
+
+// Request para registrar un nuevo producto
+message NuevoProductoRequest {
+  string nombre = 1;
+  double precio = 2;
+  int32 stock = 3;
+}
